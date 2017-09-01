@@ -163,21 +163,7 @@ def init(username, password, index_file):
         })
     if response.status_code is 200:
         print("[Initializer][Info]Login succees.")
-        return {
-                'session': index_session,
-                'pool': index_pool
-                },
-        {
-                'session': access_session,
-                'pool': access_pool
-                },
-        {
-                'session': download_session,
-                'pool': download_pool
-                },
-        process_queue,
-        download_queue,
-        fh
+        return {'session': index_session, 'pool': index_pool}, {'session': access_session, 'pool': access_pool}, {'session': download_session, 'pool': download_pool}, process_queue, download_queue, fh
     else:
         print("[Initializer][Error]Login failed.")
         return None
