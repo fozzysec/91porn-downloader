@@ -1,6 +1,6 @@
 **Auto Downloader**
 
-This is a video downloader for 91porn
+This is a video downloader for 91porn888.com
 
 **pre-requisites**
 
