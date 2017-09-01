@@ -35,7 +35,11 @@ def get_player_video(session, queue, url, title):
     match = _video_player_re.search(player_config)
     video_url = match.group(1)
     url_validator = urlparse(video_url)
-    if not all([url_validator.scheme, url_validator.netloc, url_validator.path]):
+    if not all([
+        url_validator.scheme,
+        url_validator.netloc,
+        url_validator.path
+        ]):
         print("[Fetcher][Error]Broken URL found.")
         print("[Fetcher][Debug]%s" % player_config)
         get_player_video(session, queue, url, title)
@@ -57,7 +61,12 @@ def process_video_urls(queue, download_queue, access):
         result, updated_visited_list = check_video_url(visited_list, url)
         if result:
             visited_list = updated_visited_list
-            access['pool'].submit(visit_video, access['session'], download_queue, ''.join([SITE_DOMAIN, url]))
+            access['pool'].submit(
+                    visit_video,
+                    access['session'],
+                    download_queue,
+                    ''.join([SITE_DOMAIN, url])
+                    )
         else:
             print("[Fetcher][Info]Duplicated video, discard it.")
     access['pool'].shutdown()
@@ -105,7 +114,12 @@ def download_videos(queue, download):
         (url, title) = queue.get(block=True)
         if url is 'STOP':
             break
-        download['pool'].submit(download_video, download['session'], url, title)
+        download['pool'].submit(
+                download_video,
+                download['session'],
+                url,
+                title
+                )
     download['pool'].shutdown()
 
 def visit_index(session, url, queue, fh):
@@ -149,7 +163,21 @@ def init(username, password, index_file):
         })
     if response.status_code is 200:
         print("[Initializer][Info]Login succees.")
-        return {'session': index_session, 'pool': index_pool}, {'session': access_session, 'pool': access_pool}, {'session': download_session, 'pool': download_pool}, process_queue, download_queue, fh
+        return {
+                'session': index_session,
+                'pool': index_pool
+                },
+        {
+                'session': access_session,
+                'pool': access_pool
+                },
+        {
+                'session': download_session,
+                'pool': download_pool
+                },
+        process_queue,
+        download_queue,
+        fh
     else:
         print("[Initializer][Error]Login failed.")
         return None
@@ -167,13 +195,25 @@ end_id = int(sys.argv[5])
 
 index, access, download, process_queue, download_queue, fh = init(username, password, index_file)
 
-process_thread = Thread(target=process_video_urls, args=(process_queue, download_queue, access,))
+process_thread = Thread(
+        target=process_video_urls,
+        args=(process_queue, download_queue, access,)
+        )
 process_thread.start()
-download_thread = Thread(target=download_videos, args=(download_queue, download,))
+download_thread = Thread(
+        target=download_videos,
+        args=(download_queue, download,)
+        )
 download_thread.start()
 urls = [INDEX_URL.format(SITE_DOMAIN, i) for i in range(start_id, end_id + 1)]
 for url in urls:
-    index['pool'].submit(visit_index, index['session'], url, process_queue, fh)
+    index['pool'].submit(
+            visit_index,
+            index['session'],
+            url,
+            process_queue,
+            fh
+            )
 
 index['pool'].shutdown()
 process_queue.put('STOP')
