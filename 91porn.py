@@ -15,6 +15,7 @@ import os
 import json
 from binascii import crc32
 
+#alternative "http://www.91porn999.com"
 SITE_DOMAIN = "http://www.91porn888.com"
 LOGIN_URL = "{0}/denglu.html"
 INDEX_URL = "{0}/lm/1-3-2-1-{1}.html"
