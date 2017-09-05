@@ -1,4 +1,4 @@
-**Auto Downloader**
+***Auto Downloader***
 
 This is a video downloader for 91porn888.com
 
@@ -17,6 +17,34 @@ create directory `videos`
 91porn.py &lt;username&gt; &lt;password&gt; &lt;save-list-file-name&gt; &lt;start-page-number&gt; &lt;end-page-number&gt;
 
 example:`./91porn.py foo bar my-list.txt 1 50`
+
+**proxy settings**
+
+To use `HTTP` proxy, you need to set the environment variable by
+
+```
+export HTTP_PROXY="http://server:port"
+```
+
+To use `SOCKS5` first you need to install `requests` with `socks` support by the following command
+
+```
+sudo pip3 install requests[socks]
+```
+
+Then set up proxy by
+
+*local dns resolve*
+
+```
+export HTTP_PROXY="socks5://server:port"
+```
+
+*remote dns reslove*
+
+```
+export HTTP_PROXY="socks5h://server:port"
+```
 
 **notice**
 
