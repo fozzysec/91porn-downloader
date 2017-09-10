@@ -49,6 +49,7 @@ export HTTP_PROXY="socks5h://server:port"
 **notice**
 
 the script will log downloaded videos and will skip them.
-currently the website uses javascript to deduct credits and can be passthrough by this script, no credits are needed to download videos.
+~~currently the website uses javascript to deduct credits and can be passthrough by this script, no credits are needed to download videos.~~
+The website has updated the function of deducting credits to perform at the server-end, so to download large amount of videos you may need a VIP account.
 
 To make downloader become multi-threading, remove gevent imports and remove `monkey.patch_all()`
