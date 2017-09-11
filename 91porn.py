@@ -19,6 +19,7 @@ from binascii import crc32
 SITE_DOMAIN = "http://www.91porn888.com"
 LOGIN_URL = "{0}/denglu.html"
 INDEX_URL = "{0}/lm/1-3-2-1-{1}.html"
+VALIDATION = "www.wuyuexiang.com"
 DOWNLOAD_DIR = "videos"
 UA = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko'
 _video_player_re = re.compile(r'videourl:\s*\"(.*)\"', re.MULTILINE)
@@ -160,7 +161,8 @@ def init(username, password, index_file):
     fh = open(index_file, 'w', encoding='utf8')
     response = access_session.post(LOGIN_URL.format(SITE_DOMAIN), data={
         'ming': username,
-        'mima': password
+        'mima': password,
+        'wenti': VALIDATION
         })
     if response.status_code is 200:
         print("[Initializer][Info]Login succees.")
