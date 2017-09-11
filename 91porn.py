@@ -27,8 +27,12 @@ VISIT_RECORD = "_91_record.dat"
 VISIT_RECORD_TMP = "_91_record.tmp"
 
 
-def get_player_video(session, queue, url, title):
-    doc = lxml.html.fromstring(session.get(url).text)
+def get_player_video(session, queue, url, title, retries = 3):
+    response = session.get(url, allow_redirects=False)
+    if response.status_code is not 200:
+        print("[Fetcher][Error]Insuffcient balance")
+        return
+    doc = lxml.html.fromstring(response.text)
     try:
         player_config = doc.xpath('//script[2]/text()')[0]
     except IndexError:
@@ -42,9 +46,10 @@ def get_player_video(session, queue, url, title):
         url_validator.netloc,
         url_validator.path
         ]):
-        print("[Fetcher][Error]Broken URL found.")
-        print("[Fetcher][Debug]%s" % player_config)
-        get_player_video(session, queue, url, title)
+        while(retries > 0):
+            print("[Fetcher][Error]Broken URL found.")
+            print("[Fetcher][Debug]%s" % player_config)
+            get_player_video(session, queue, url, title, retries - 1)
     else:
         print("[Fetcher][Info]%s: %s" % (title, video_url))
         queue.put((video_url, title,))
