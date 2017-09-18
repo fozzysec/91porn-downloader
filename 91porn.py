@@ -46,10 +46,10 @@ def get_player_video(session, queue, url, title, retries = 3):
         url_validator.netloc,
         url_validator.path
         ]):
-        while(retries > 0):
-            print("[Fetcher][Error]Broken URL found.")
-            print("[Fetcher][Debug]%s" % player_config)
+        if(retries > 0):
+            print("[Fetcher][Error]Broken URL found, retries = %d" % retries)
             get_player_video(session, queue, url, title, retries - 1)
+            return
     else:
         print("[Fetcher][Info]%s: %s" % (title, video_url))
         queue.put((video_url, title,))
