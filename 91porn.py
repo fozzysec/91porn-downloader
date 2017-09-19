@@ -117,8 +117,11 @@ def download_video(session, url, title):
     if response.headers['Content-Type'] is 'text/html':
         print("[Downloader][Error]Invalid video {} found, skipping.".format(title))
         return
+    if response.headers['content-length'] is 0:
+        print("[Downloader][Error]Empty video {} found, skipping.".format(title))
+        return
     checksum = crc32(url.encode('ascii'))
-    print("[Downloader][Info]Starting download video %s.mp4..." % title)
+    print("[Downloader][Info]Starting download video {}-{:x}.mp4...".format(title, checksum))
     with open("{}/{}-{:x}.mp4".format(DOWNLOAD_DIR, title, checksum), 'wb') as f:
         for chunk in response.iter_content(chunk_size=4096):
             f.write(chunk)
