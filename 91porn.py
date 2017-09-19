@@ -122,11 +122,14 @@ def download_video(session, url, title):
         print("[Downloader][Error]Empty video {} found, skipping.".format(title))
         return
     checksum = crc32(url.encode('ascii'))
-    print("[Downloader][Info]Starting download video {}-{:x}.mp4...".format(title, checksum))
-    with open("{}/{}-{:x}.mp4".format(DOWNLOAD_DIR, title, checksum), 'wb') as f:
-        for chunk in response.iter_content(chunk_size=4096):
-            f.write(chunk)
-    print("[Downloader][Info]Download video {}-{:x}.mp4 done.".format(title, checksum))
+    try:
+        f = open("{}/{}-{:x}.mp4".format(DOWNLOAD_DIR, title, checksum), 'rb')
+    except FileNotFoundError:
+        print("[Downloader][Info]Starting download video {}-{:x}.mp4...".format(title, checksum))
+        with open("{}/{}-{:x}.mp4".format(DOWNLOAD_DIR, title, checksum), 'wb') as f:
+            for chunk in response.iter_content(chunk_size=4096):
+                f.write(chunk)
+        print("[Downloader][Info]Download video {}-{:x}.mp4 done.".format(title, checksum))
 
 def download_videos(queue, download):
     while(True):
