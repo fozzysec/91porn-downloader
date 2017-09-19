@@ -25,6 +25,7 @@ UA = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko'
 _video_player_re = re.compile(r'videourl:\s*\"(.*)\"', re.MULTILINE)
 VISIT_RECORD = "_91_record.dat"
 VISIT_RECORD_TMP = "_91_record.tmp"
+TIMEOUT = 30
 FETCH_RETRY = 5
 DOWNLOAD_RETRY = 5
 INDEX_THREAD = 2
@@ -32,7 +33,7 @@ ACCESS_THREAD = 5
 DOWNLOAD_THREAD = 5
 
 def get_player_video(session, queue, url, title, retries = 3):
-    response = session.get(url, allow_redirects=False)
+    response = session.get(url, allow_redirects=False, timeout=TIMEOUT)
     if response.status_code is not 200:
         print("[Fetcher][Error]Insuffcient balance")
         return
@@ -95,7 +96,7 @@ def check_video_url(visited_list, url):
         return False, None
 
 def visit_video(session, queue, url):
-    response = session.get(url, allow_redirects=False)
+    response = session.get(url, allow_redirects=False, timeout=TIMEOUT)
     if response.status_code is 302:
         print("[visit_video][Error]Insufficient account credit balance.")
         queue.put(('STOP', None,))
@@ -113,7 +114,7 @@ def visit_video(session, queue, url):
     get_player_video(session, queue, player_url, title)
 
 def download_video(session, url, title):
-    response = session.get(url, stream=True)
+    response = session.get(url, stream=True, timeout=TIMEOUT)
     if response.headers['Content-Type'] is 'text/html':
         print("[Downloader][Error]Invalid video {} found, skipping.".format(title))
         return
@@ -141,7 +142,7 @@ def download_videos(queue, download):
     download['pool'].shutdown()
 
 def visit_index(session, url, queue, fh):
-    doc = lxml.html.fromstring(session.get(url).text)
+    doc = lxml.html.fromstring(session.get(url, timeout=TIMEOUT).text)
     results = doc.xpath('//div[@class="col-sm-6 col-md-12 beijing img-rounded divcss32"]')
     for node in results:
         try:
