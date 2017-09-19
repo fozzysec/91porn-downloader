@@ -25,7 +25,11 @@ UA = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko'
 _video_player_re = re.compile(r'videourl:\s*\"(.*)\"', re.MULTILINE)
 VISIT_RECORD = "_91_record.dat"
 VISIT_RECORD_TMP = "_91_record.tmp"
-
+FETCH_RETRY = 5
+DOWNLOAD_RETRY = 5
+INDEX_THREAD = 2
+ACCESS_THREAD = 5
+DOWNLOAD_THREAD = 5
 
 def get_player_video(session, queue, url, title, retries = 3):
     response = session.get(url, allow_redirects=False)
@@ -146,22 +150,22 @@ def visit_index(session, url, queue, fh):
 def init(username, password, index_file):
     index_session = requests.Session()
     index_session.headers.update({'user-agent': UA})
-    index_session.mount(SITE_DOMAIN, HTTPAdapter(max_retries=5))
+    index_session.mount(SITE_DOMAIN, HTTPAdapter(max_retries=FETCH_RETRY))
 
     access_session = requests.Session()
     access_session.headers.update({'user-agent': UA})
-    access_session.mount(SITE_DOMAIN, HTTPAdapter(max_retries=5))
+    access_session.mount(SITE_DOMAIN, HTTPAdapter(max_retries=FETCH_RETRY))
 
     download_session = requests.Session()
     download_session.headers.update({'user-agent': UA})
-    download_session.mount('http://', HTTPAdapter(max_retries=3))
+    download_session.mount('http://', HTTPAdapter(max_retries=DOWNLOAD_RETRY))
 
     process_queue = Queue()
     download_queue = Queue()
 
-    index_pool = ThreadPoolExecutor(max_workers=5)
-    access_pool = ThreadPoolExecutor(max_workers=5)
-    download_pool = ThreadPoolExecutor(max_workers=5)
+    index_pool = ThreadPoolExecutor(max_workers=INDEX_THREAD)
+    access_pool = ThreadPoolExecutor(max_workers=ACCESS_THREAD)
+    download_pool = ThreadPoolExecutor(max_workers=DOWNLOAD_THREAD)
 
     fh = open(index_file, 'w', encoding='utf8')
     response = access_session.post(LOGIN_URL.format(SITE_DOMAIN), data={
