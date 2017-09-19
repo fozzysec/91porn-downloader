@@ -114,11 +114,15 @@ def visit_video(session, queue, url):
 
 def download_video(session, url, title):
     response = session.get(url, stream=True)
+    if response.headers['Content-Type'] is 'text/html':
+        print("[Downloader][Error]Invalid video {} found, skipping.".format(title))
+        return
+    checksum = crc32(url.encode('ascii'))
     print("[Downloader][Info]Starting download video %s.mp4..." % title)
-    with open("{}/{}.mp4".format(DOWNLOAD_DIR, title), 'wb') as f:
+    with open("{}/{}-{:x}.mp4".format(DOWNLOAD_DIR, title, checksum), 'wb') as f:
         for chunk in response.iter_content(chunk_size=4096):
             f.write(chunk)
-    print("[Downloader][Info]Download video %s.mp4 done." % title)
+    print("[Downloader][Info]Download video {}-{:x}.mp4 done.".format(title, checksum))
 
 def download_videos(queue, download):
     while(True):
