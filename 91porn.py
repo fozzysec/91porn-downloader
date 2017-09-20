@@ -121,6 +121,9 @@ def download_video(session, url, title):
     if response.headers['content-length'] is 0:
         print("[Downloader][Error]Empty video {} found, skipping.".format(title))
         return
+    if response.status_code is not 200:
+        print("[Downloader][Error]Invalid video {} found, skipping.".format(title))
+        return
     checksum = crc32(url.encode('ascii'))
     try:
         f = open("{}/{}-{:x}.mp4".format(DOWNLOAD_DIR, title, checksum), 'rb')
