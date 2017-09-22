@@ -118,9 +118,6 @@ def download_video(session, url, title):
     if response.headers['Content-Type'] is 'text/html':
         print("[Downloader][Error]Invalid video {} found, skipping.".format(title))
         return
-    if response.headers['content-length'] is 0:
-        print("[Downloader][Error]Empty video {} found, skipping.".format(title))
-        return
     if response.status_code is not 200:
         print("[Downloader][Error]Invalid video {} found, skipping.".format(title))
         return
