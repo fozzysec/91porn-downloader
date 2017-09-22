@@ -109,7 +109,7 @@ def visit_video(session, queue, url):
     except IndexError:
         print("[visit_video][Error]Error when get video page")
         return
-    title = re.sub('[\n\s]', '', title)
+    title = re.sub('[\n\s\'\?\"]', '', title)
     player_url = ''.join([SITE_DOMAIN, player_url])
     get_player_video(session, queue, player_url, title)
 
