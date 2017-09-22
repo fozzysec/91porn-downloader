@@ -56,7 +56,7 @@ def get_player_video(session, queue, url, title, retries = 3):
             get_player_video(session, queue, url, title, retries - 1)
             return
     else:
-        print("[Fetcher][Info]%s: %s" % (title, video_url))
+        print("[Fetcher][Info]%s" % title)
         queue.put((video_url, title,))
 
 def process_video_urls(queue, download_queue, access):
@@ -153,13 +153,13 @@ def visit_index(session, url, queue, fh):
     for node in results:
         try:
             title = node.xpath('./div/h5/a/text()')[0]
-            url = node.xpath('./div/h5/a/@href')[0]
+            page_url = node.xpath('./div/h5/a/@href')[0]
             date = ' '.join([node.xpath('./div/div/div/div/ul/li[2]/a/text()')[0], node.xpath('./div/div/div/div/ul/li[3]/a/text()')[0].rstrip()])
         except IndexError:
             continue
-        print("[Parser][Info]%s| %s| %s" % (url, date, title))
-        fh.write("%s| %s| %s\n" % (url, date, title))
-        queue.put(str(url))
+        fh.write("%s| %s| %s\n" % (page_url, date, title))
+        queue.put(str(page_url))
+    print("[Parser][Info]Index {} fetched.".format(url))
 
 def init(username, password, index_file):
     index_session = requests.Session()
